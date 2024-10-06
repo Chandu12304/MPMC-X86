@@ -26,6 +26,7 @@ BINARY_SEARCH:
     MOV BX,SI
     ADD BX,DI
     SHR BX,1       ; Midpoint = (low + high) / 2
+    SHL BX,1       ; Multiply by 2 to get correct word offset (index * 2)
 
     ; Compare midpoint element with key
     MOV AX,A[BX]   ; AX = A[mid]
@@ -35,13 +36,15 @@ BINARY_SEARCH:
 
     ; Adjust high pointer (search in lower half)
     MOV DI,BX
-    DEC DI         ; high = mid - 1
+    SHR DI,1       ; Convert back from byte offset to index (high = mid - 1)
+    DEC DI         
     JMP BINARY_SEARCH
 
 ADJUST_LOW:
     ; Adjust low pointer (search in upper half)
     MOV SI,BX
-    INC SI         ; low = mid + 1
+    SHR SI,1       ; Convert back from byte offset to index (low = mid + 1)
+    INC SI         
     JMP BINARY_SEARCH
 
 NOT_FOUND_MSG:
