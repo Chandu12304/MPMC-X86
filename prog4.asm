@@ -34,33 +34,36 @@ NCR_PROC PROC
     CMP BX, 1          ; If r == 1
     JZ N2              ; Result is n
 
-    MOV CX, AX
-    DEC CX             ; Compute (n-1)
-    CMP CX, BX         ; Check if r == n-1
-    JZ N2              ; Result is n
-    
     PUSH AX            ; Save n
     PUSH BX            ; Save r
 
-    DEC AX             ; n-1
-    CALL NCR_PROC      ; Recursive call with n-1
-
+    ; First recursive call: (n-1)Cr
+    DEC AX             ; n = n - 1
+    CALL NCR_PROC      ; Call NCR_PROC with (n-1)Cr
+    MOV CX, NCR        ; Store result of (n-1)Cr in CX
+    
     POP BX             ; Restore r
     POP AX             ; Restore n
 
-    DEC AX             ; Compute n-1
-    DEC BX             ; Compute r-1
-    CALL NCR_PROC      ; Recursive call with (n-1)C(r-1)
+    PUSH AX            ; Save n
+    PUSH BX            ; Save r
+
+    ; Second recursive call: (n-1)C(r-1)
+    DEC AX             ; n = n - 1
+    DEC BX             ; r = r - 1
+    CALL NCR_PROC      ; Call NCR_PROC with (n-1)C(r-1)
+    ADD CX, NCR        ; Add result of (n-1)Cr and (n-1)C(r-1)
+
+    MOV NCR, CX        ; Store final result in NCR
     
-    JMP LAST           ; Jump to end
-
-N1: ADD NCR, 1         ; If r == 0 or r == n, result is 1
+    POP BX             ; Restore r
+    POP AX             ; Restore n
     RET
 
-N2: ADD NCR, AX        ; If r == 1 or r == n-1, result is n
+N1: MOV NCR, 1         ; If r == 0 or r == n, result is 1
     RET
 
-LAST:
+N2: MOV NCR, AX        ; If r == 1 or r == n-1, result is n
     RET
 
 NCR_PROC ENDP
