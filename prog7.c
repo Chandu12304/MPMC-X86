@@ -1,3 +1,4 @@
+//7a
 #include <lpc21xx.h>  // Include the LPC2148 specific header file
 
 // Main function
