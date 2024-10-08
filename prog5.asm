@@ -1,8 +1,9 @@
 .MODEL SMALL
 .STACK 100H
+
 .DATA
-    MSG1 DB "TIME IS: $"
-    MSG2 DB 10,13,"DATE IS: 08/10/2024$"  ; Predefined date string
+    MSG1 DB "TIME IS: $"          ; Message for displaying time
+    MSG2 DB 10,13,"DATE IS: 02 08/10/2024$"  ; Predefined date string
 
 .CODE
 MAIN PROC
@@ -40,13 +41,6 @@ MAIN PROC
     MOV AL, DH
     CALL DISPLAY_NUMBER
 
-    ; New line
-    MOV AH, 02H
-    MOV DL, 10             ; ASCII code for newline (LF)
-    INT 21H
-    MOV DL, 13             ; ASCII code for carriage return (CR)
-    INT 21H
-
     ; Display "DATE IS: 08/10/2024"
     LEA DX, MSG2
     MOV AH, 09H
@@ -59,16 +53,15 @@ MAIN ENDP
 
 ; Procedure to display a 2-digit number (e.g., hours, minutes, seconds)
 DISPLAY_NUMBER PROC
-    PUSH AX
     AAM                       ; Convert number in AL to two digits: AH = tens, AL = units
-    ADD AH, 30H               ; Convert to ASCII
-    ADD AL, 30H
-    MOV DL, AH                ; Display tens digit
+    ADD AX, 3030H             ; Convert to ASCII
+    MOV DX, AX
+    XCHG DH, DL               ; Swap the digits to display the tens first
     MOV AH, 02H
-    INT 21H
-    MOV DL, AL                ; Display units digit
-    INT 21H
-    POP AX
+    INT 21H                   ; Display tens digit
+    MOV DL, DH
+    MOV AH, 02H
+    INT 21H                   ; Display units digit
     RET
 DISPLAY_NUMBER ENDP
 
