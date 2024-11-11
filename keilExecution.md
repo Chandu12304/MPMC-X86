@@ -22,6 +22,16 @@ If it prompts to add the **Startup.s** file, select **Yes**. This file initializ
 1. Click **Project > Build Target** or press **F7** to compile.
 2. If there are no errors, go to **Debug > Start/Stop Debug Session** to simulate the program in uVision 4.
 
+### 5. Run and Check Output Using the Watch Window
+Set up the Watch Window:
+
+In Debug mode, open the Watch window by going to View > Watch Window > Watch 1.
+This window lets you track the values of variables during code execution.
+Add Variables to the Watch Window:
+
+In Watch 1, click on an empty row and type the name of the variable you want to watch (e.g., sum, sub, mul, and div).
+Press Enter to add each variable. You should now see a, b, sum, sub, mul, and div listed in the Watch window.
+
 ### Optional: Flashing to LPC2148
 Since Keil uVision 4 doesn't have a direct flashing option, you may need to use external tools like **Flash Magic** to upload the generated `.hex` file to your LPC2148 board.
 
