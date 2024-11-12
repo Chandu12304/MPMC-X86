@@ -14,7 +14,6 @@ MAIN:
     ; Initialize data segment and extra segment for string manipulation
     MOV AX, @DATA
     MOV DS, AX
-    MOV ES, AX
 
     ; Initialize SI to point to the original string (STR)
     LEA SI, STR
