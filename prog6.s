@@ -15,8 +15,7 @@
 
  LDR R9, =0x20           
  STR R9, [R0]            
- LDR R10, [R0]
- ADD R12, R11, #10       
+ LDR R10, [R0]      
  PUSH {R0, R1, R2}       
  POP {R0, R1, R2}  
          
