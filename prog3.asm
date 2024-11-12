@@ -2,7 +2,7 @@
 .STACK 100H
 
 .DATA
-STR DB "MADAME$"          ; The original string with a '$' sign to indicate the end
+STR DB " MADAME$"          ; The original string with a '$' sign to indicate the end
 LEN EQU $-1-STR          ; Calculate the length of the string excluding the '$'
 RSTR DB 10 DUP('$')      ; Buffer to hold the reversed string, initialized with '$'
 MSG DB 10,13," REVERSE STRING IS: $"   ; Message to display the reversed string
