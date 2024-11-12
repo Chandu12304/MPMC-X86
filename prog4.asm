@@ -1,72 +1,61 @@
 .MODEL SMALL
-.STACK 100H  ; Define stack size
+.STACK 100H
 
 .DATA
-    N DW 6            ; Store n (6)
-    R DW 2            ; Store r (2)
-    NCR DW 0          ; Store result of nCr (initially 0)
+N DW 7                ; Value of n (nCr calculation)
+R DW 3                ; Value of r (nCr calculation)
+NCR DW 0              ; Result of nCr, initially 0
 
 .CODE
-MAIN:
-    MOV AX, @DATA     ; Initialize data segment
-    MOV DS, AX        ; Set DS register to point to the data segment
+MOV AX, @DATA         ; Initialize data segment
+MOV DS, AX
 
-    MOV AX, N         ; Load value of N into AX
-    MOV BX, R         ; Load value of R into BX
+MOV AX, N             ; Load n into AX register
+MOV BX, R             ; Load r into BX register
+CALL NCR_PROC         ; Call the nCr calculation procedure
 
-    CALL NCR_PROC     ; Call the procedure to calculate nCr
+MOV AH, 4CH           ; DOS function to terminate program
+INT 21H
 
-    MOV AH, 4CH       ; DOS interrupt to terminate the program
-    INT 21H
+ncr_proc PROC
+    CMP AX, BX        ; Compare n (AX) and r (BX)
+    JZ N1             ; If n == r, set nCr = 1 (nCr for n == r is always 1)
 
-; Recursive procedure to calculate nCr
-NCR_PROC PROC
-    CMP AX, BX        ; Compare n and r
-    JZ N1             ; If n == r, result is 1 (jump to N1)
+    CMP BX, 0         ; Check if r = 0
+    JZ N1             ; If r == 0, set nCr = 1 (nCr for r = 0 is always 1)
 
-    CMP BX, 0         ; If r == 0
-    JZ N1             ; If yes, result is 1 (jump to N1)
+    CMP BX, 1         ; Check if r = 1
+    JZ N2             ; If r == 1, set nCr = n (nCr for r = 1 is n)
 
-    CMP BX, 1         ; If r == 1
-    JZ N2             ; If yes, result is n (jump to N2)
+    MOV CX, AX        ; Store n in CX for further checks
+    DEC CX            ; Compute n - 1
+    CMP CX, BX        ; Check if r = n - 1
+    JZ N2             ; If true, set nCr = n (nCr for r = n-1 is n)
 
-    MOV CX, AX        ; Save n into CX
-    DEC CX            ; Decrement CX (n-1)
-    CMP CX, BX        ; Compare (n-1) with r
-    JZ N2             ; If (n-1) == r, result is n (jump to N2)
+    PUSH AX           ; Save current n (AX) on stack
+    PUSH BX           ; Save current r (BX) on stack
+    DEC AX            ; Compute n - 1 for recursive call
+    CALL ncr_proc     ; Call nCr(n-1, r)
 
-    ; Recursive calculation for nCr using the formula: nCr = (n-1)Cr + (n-1)C(r-1)
-    PUSH AX           ; Save n
-    PUSH BX           ; Save r
-    DEC AX            ; Decrement n (n-1)
-    CALL NCR_PROC     ; Recursive call for (n-1)Cr
-    POP BX            ; Restore r
-    POP AX            ; Restore n
+    POP BX            ; Restore r from stack
+    POP AX            ; Restore n from stack
 
-    MOV CX, NCR       ; Store result of (n-1)Cr in CX
+    DEC AX            ; Compute n - 1 for the next recursive call
+    DEC BX            ; Compute r - 1 for the next recursive call
+    CALL ncr_proc     ; Call nCr(n-1, r-1)
 
-    PUSH AX           ; Save n
-    PUSH BX           ; Save r
-    DEC AX            ; Decrement n (n-1)
-    DEC BX            ; Decrement r (r-1)
-    CALL NCR_PROC     ; Recursive call for (n-1)C(r-1)
-    POP BX            ; Restore r
-    POP AX            ; Restore n
+    JMP LAST          ; Skip over the specific case handling to the end of procedure
 
-    ADD CX, NCR       ; Add the result of (n-1)C(r-1) to (n-1)Cr
+n1:
+    ADD NCR, 1        ; If n == r or r == 0, nCr = 1
+    RET
+
+n2:
+    ADD NCR, AX       ; If r = 1 or r = n-1, nCr = n
+    RET
 
 LAST:
-    MOV NCR, CX       ; Store final result in NCR
-    RET
+    RET               ; End of nCr procedure, return to caller
 
-N1:
-    ADD NCR, 1        ; If n == r or r == 0, result is 1
-    RET
-
-N2:
-    ADD NCR, AX       ; If r == 1 or r == n-1, result is n
-    RET
-
-NCR_PROC ENDP
-
-END MAIN
+ncr_proc ENDP
+END
