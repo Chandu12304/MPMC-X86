@@ -6,7 +6,6 @@
     MSG2 DB 10,13,"DATE IS: 02 08/10/2024$"  ; Predefined date string
 
 .CODE
-MAIN PROC
     MOV AX, @DATA        ; Initialize the data segment
     MOV DS, AX
     
@@ -49,7 +48,6 @@ MAIN PROC
     ; Exit program
     MOV AH, 4CH
     INT 21H
-MAIN ENDP
 
 ; Procedure to display a 2-digit number (e.g., hours, minutes, seconds)
 DISPLAY_NUMBER PROC
@@ -65,4 +63,4 @@ DISPLAY_NUMBER PROC
     RET
 DISPLAY_NUMBER ENDP
 
-END MAIN
+END
